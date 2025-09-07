@@ -122,7 +122,7 @@ Function SelectMirrorPage
     ${NSD_CreateRadioButton} 0 90u 100% 12u "CNB"
     Pop $RadioCNB
     # Toggle to enable/disable Aliyun mirror
-    ${NSD_CreateCheckBox} 0 95u 100% 12u "${MIRROR_NAME}"
+    ${NSD_CreateCheckBox} 0 110u 100% 12u "${MIRROR_NAME}"
     Pop $PyPiMirrorSelection
 
     # Set default selection (GitLab)
