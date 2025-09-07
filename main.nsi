@@ -16,6 +16,8 @@ InstallDir "C:\ETS2LA"
 
 !define MIRROR_NAME "Aliyun PyPi Mirror"
 !define MIRROR_URL "https://mirrors.aliyun.com/pypi/simple/"
+!define GOODNIGHTAN_MIRROR_NAME "GoodnightAn PyPi Mirror"
+!define GOODNIGHTAN_MIRROR_URL "https://pypi.ets2la.cn/index"
 
 # Installer Information
 Name "ETS2LA"
@@ -64,6 +66,7 @@ Var RadioGitHubProxy
 Var RadioSourceForge
 Var RadioCNB
 Var PyPiMirrorSelection
+Var GoodnightAnMirrorSelection
 
 # Shortcuts
 Page custom ShortcutSelectionPage ShortcutSelectionPageLeave
@@ -124,6 +127,9 @@ Function SelectMirrorPage
     # Toggle to enable/disable Aliyun mirror
     ${NSD_CreateCheckBox} 0 110u 100% 12u "${MIRROR_NAME}"
     Pop $PyPiMirrorSelection
+    # Toggle to enable/disable GoodnightAn mirror
+    ${NSD_CreateCheckBox} 0 125u 100% 12u "${GOODNIGHTAN_MIRROR_NAME}"
+    Pop $GoodnightAnMirrorSelection
 
     # Set default selection (GitLab)
     ${NSD_SetState} $RadioGitLab ${BST_CHECKED}
@@ -162,7 +168,12 @@ Function SelectMirrorPageLeave
     ${If} $0 == ${BST_CHECKED}
         StrCpy $PyPi "Mirror"
     ${Else}
-        StrCpy $PyPi "Pypi"
+        ${NSD_GetState} $GoodnightAnMirrorSelection $0
+        ${If} $0 == ${BST_CHECKED}
+            StrCpy $PyPi "GoodnightAnMirror"
+        ${Else}
+            StrCpy $PyPi "Pypi"
+        ${EndIf}
     ${EndIf}
 FunctionEnd
 
@@ -451,6 +462,13 @@ Section "Download" SEC03
         nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir wheel setuptools poetry requests'
         DetailPrint $(PythonTakesLong)
         nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+
+    ${ElseIf} $PyPi == "GoodnightAnMirror"
+
+        DetailPrint $(PythonRequirements)
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${GOODNIGHTAN_MIRROR_URL} --no-cache-dir wheel setuptools poetry requests'
+        DetailPrint $(PythonTakesLong)
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${GOODNIGHTAN_MIRROR_URL} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
 
     ${EndIf}
 SectionEnd
